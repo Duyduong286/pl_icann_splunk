@@ -2,3 +2,4 @@ __pycache__
 DOWNLOAD_DIRECTORY
 *.log
 __config.py
+chromedriver.exe
