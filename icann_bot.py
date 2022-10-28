@@ -23,6 +23,9 @@ def init_driver():
 def close():
     driver.close()
 
+def quit():
+    driver.quit()
+
 def login():
     try:
         driver.get(config.ICANN_URL)

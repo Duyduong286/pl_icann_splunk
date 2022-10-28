@@ -71,3 +71,6 @@ def add_more_data():
 def close():
     driver.close()
 
+def quit():
+    driver.quit()
+
