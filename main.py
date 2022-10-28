@@ -17,7 +17,7 @@ def init():
 def upload_files():
     splunk_bot.init_driver()
     if splunk_bot.login():
-        logger.info("Login success!", extra = {"agent" : config.PLUNK_AGENT})
+        logger.info("Login success!", extra = {"agent" : config.SPLUNK_AGENT})
         try:
             splunk_bot.navigate()
             files = os.listdir(config.DOWNLOAD_PATH)
@@ -29,18 +29,18 @@ def upload_files():
                         try:
                             path = os.path.join(config.DOWNLOAD_PATH, file)
                             splunk_bot.upload(path=path)
-                            logger.info(f"File uploaded successfully! - PATH: {path} - SIZE: {size(path)}", extra = {"agent" : config.PLUNK_AGENT})
+                            logger.info(f"File uploaded successfully! - PATH: {path} - SIZE: {size(path)}", extra = {"agent" : config.SPLUNK_AGENT})
                         except:
-                            logger.error(f"Can't upload files: {path}", extra = {"agent" : config.PLUNK_AGENT})
+                            logger.error(f"Can't upload files: {path}", extra = {"agent" : config.SPLUNK_AGENT})
                         
                         splunk_bot.add_more_data()
                     else:
-                        logger.info(f"Invalid file format to upload! - PATH: {path} - SIZE: {size(path)}", extra = {"agent" : config.PLUNK_AGENT})
+                        logger.info(f"Invalid file format to upload! - PATH: {path} - SIZE: {size(path)}", extra = {"agent" : config.SPLUNK_AGENT})
         except Exception as e:
-            logger.error(f"{str(e)}", extra = {"agent" : config.PLUNK_AGENT})
-            logger.error(f"Can't upload files: {path}", extra = {"agent" : config.PLUNK_AGENT})
+            logger.error(f"{str(e)}", extra = {"agent" : config.SPLUNK_AGENT})
+            logger.error(f"Can't upload files: {path}", extra = {"agent" : config.SPLUNK_AGENT})
     else:
-        logger.error("Login failed or Connection Failure!", extra = {"agent" : config.PLUNK_AGENT})
+        logger.error("Login failed or Connection Failure!", extra = {"agent" : config.SPLUNK_AGENT})
     splunk_bot.quit()
 
 def download_files():
@@ -135,7 +135,7 @@ def end():
     try:
         icann_bot.quit()
         splunk_bot.quit()
-        logger.info(".........DONE!!!.........", extra = {"agent" : config.PLUNK_AGENT})
+        logger.info(".........DONE!!!.........", extra = {"agent" : config.SPLUNK_AGENT})
     except:
         pass
 

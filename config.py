@@ -30,6 +30,6 @@ SPLUNK_HOME_URL = f"http://{SPLUNK['host']}:{SPLUNK['port']}/en-US/app/launcher/
 ADD_DATA_URL = f"http://{SPLUNK['host']}:{SPLUNK['port']}/en-US/manager/search/adddata"
 LOGGER_NAME = "ICANN_SPLUNK_LOGGER"
 LOG_FILE = "Log.log"
-PLUNK_AGENT = "SPLUNK"
+SPLUNK_AGENT = "SPLUNK"
 ICANN_AGENT = "ICANN"
 DIR_AGENT = "DOWNLOAD_DIRECTORY"
