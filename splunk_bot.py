@@ -16,11 +16,11 @@ def init_driver():
 def login():
     try:
         driver.get(config.SPLUNK_URL)
-        WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("userhome"))
+        WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("home"))
         return True
     except:
         pass
-    
+
     try:
         driver.get(config.SPLUNK_URL)
         WebDriverWait(driver, config.TIME_OUT).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]')))

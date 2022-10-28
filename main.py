@@ -135,7 +135,7 @@ def end():
     try:
         icann_bot.quit()
         splunk_bot.quit()
-        logger.info(".........DONE!!!.........", extra = {"agent" : config.SPLUNK})
+        logger.info(".........DONE!!!.........", extra = {"agent" : config.PLUNK_AGENT})
     except:
         pass
 
