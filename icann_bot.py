@@ -28,7 +28,7 @@ def quit():
 
 def login():
     try:
-        driver.get(config.SPLUNK_URL)
+        driver.get(config.ICANN_URL)
         WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("userhome"))
         return True
     except:
