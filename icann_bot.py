@@ -47,6 +47,9 @@ def navigate(title : str):
     path = driver.find_element(By.XPATH, f'//*[@title="{title}"]')
     path.click()
 
+def nav_czds():
+    driver.get("https://czds.icann.org/zone-requests/all")
+
 
 def get_czds_files():
     WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'tld')))

@@ -41,22 +41,22 @@ def upload_files():
             logger.error(f"Can't upload files: {path}", extra = {"agent" : config.PLUNK_AGENT})
     else:
         logger.error("Login failed or Connection Failure!", extra = {"agent" : config.PLUNK_AGENT})
-    splunk_bot.close()
+    splunk_bot.quit()
 
 def download_files():
     icann_bot.init_driver()
     if icann_bot.login():
         logger.info("Login success!", extra = {"agent" : config.ICANN_AGENT})
-        icann_bot.navigate(config.CZDS_TITLE)
+        icann_bot.nav_czds()
     else:
         logger.error("Login failed or Connection Failure!", extra = {"agent" : config.ICANN_AGENT})
-        icann_bot.close()
+        icann_bot.quit()
         return
 
     icann_bot.get_czds_files()
     time.sleep(config.TIME_SLEEP)
     check_file_download()
-    icann_bot.close()
+    icann_bot.quit()
 
 def check_file_download():
     finished = False
@@ -133,8 +133,8 @@ def extract():
 
 def end():
     try:
-        icann_bot.close()
-        splunk_bot.close()
+        icann_bot.quit()
+        splunk_bot.quit()
         logger = None
     except:
         pass
