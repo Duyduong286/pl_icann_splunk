@@ -16,6 +16,13 @@ def init_driver():
 def login():
     try:
         driver.get(config.SPLUNK_URL)
+        WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("userhome"))
+        return True
+    except:
+        pass
+    
+    try:
+        driver.get(config.SPLUNK_URL)
         WebDriverWait(driver, config.TIME_OUT).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]')))
         driver.find_element(By.XPATH, '//*[@id="username"]').send_keys(config.SPLUNK["username"])
         driver.find_element(By.XPATH, '//*[@id="password"]').send_keys(config.SPLUNK["password"])
