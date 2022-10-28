@@ -136,7 +136,6 @@ def end():
         icann_bot.quit()
         splunk_bot.quit()
         logger.info(".........DONE!!!.........")
-        logger = None
     except:
         pass
 
