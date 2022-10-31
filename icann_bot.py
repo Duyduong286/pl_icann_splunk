@@ -77,4 +77,6 @@ def get_czds_files():
             # break
         except:
             pass
+
+    return len(downloads)
     

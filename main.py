@@ -51,16 +51,16 @@ def download_files():
 
     try:
         logger.info(".................DOWNLOADING!!!................", extra = {"agent" : config.ICANN_AGENT})
-        icann_bot.get_czds_files()
+        num_files = icann_bot.get_czds_files()
     except:
         logger.info("Error while trying to download data!", extra = {"agent" : config.ICANN_AGENT})
 
     time.sleep(config.TIME_SLEEP)
-    check = check_file_download()
+    check = check_file_download(num_files)
     icann_bot.quit()
     return True and check
 
-def check_file_download():
+def check_file_download(num_files):
     while(True):
         files = os.listdir(config.DOWNLOAD_PATH)
         if len(files) == 0 :
@@ -73,8 +73,12 @@ def check_file_download():
                 files = os.listdir(config.DOWNLOAD_PATH)
                 break
 
+            if (len(files) < num_files) :
+                time.sleep(config.TIME_SLEEP)
+                if files != os.listdir(config.DOWNLOAD_PATH) : break
+
             if(i == len(files) - 1):
-                logger.info(f"Download files successfully! - {len(files)} files", extra = {"agent" : config.ICANN_AGENT})
+                logger.info(f"Download files successfully! - {len(files)}/{num_files} files", extra = {"agent" : config.ICANN_AGENT})
                 return True
 
 def clear_files():
