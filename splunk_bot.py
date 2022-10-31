@@ -95,11 +95,12 @@ def del_all_data():
     search('sourcetype="icann_txt" | delete')
     WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//a[@aria-label="Other All time"]')))
     driver.find_element(By.XPATH, '//td[@class="search-button"]//a[@aria-label="Search Button"]')
-    WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//span[@class="number"]')))
-
+    
+    WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH,'//div[@class="status shared-jobstatus-count"]/span[1]')))
     is_complete = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[1]')
     while (is_complete.text != "Complete") :
         time.sleep(config.TIME_SLEEP)
+        WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[1]')))
         is_complete = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[1]')
 
     info_events = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[2]')
