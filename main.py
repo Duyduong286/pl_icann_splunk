@@ -10,13 +10,9 @@ import splunk_bot
 from logger import create_logger
 from filesplit.split import Split
 
-def init():
-    global logger 
-    logger = create_logger(config.LOGGER_NAME, config.LOG_FILE)
-
 def upload_files():
     splunk_bot.init_driver()
-    if splunk_bot.login():
+    if splunk_bot.login(config.SPLUNK["username"], config.SPLUNK["password"]):
         logger.info("Login success!", extra = {"agent" : config.SPLUNK_AGENT})
         try:
             splunk_bot.navigate()
@@ -51,21 +47,25 @@ def download_files():
     else:
         logger.error("Login failed or Connection Failure!", extra = {"agent" : config.ICANN_AGENT})
         icann_bot.quit()
-        return
+        return False
 
-    icann_bot.get_czds_files()
+    try:
+        logger.info(".................DOWNLOADING!!!................", extra = {"agent" : config.ICANN_AGENT})
+        icann_bot.get_czds_files()
+    except:
+        logger.info("Error while trying to download data!", extra = {"agent" : config.ICANN_AGENT})
+
     time.sleep(config.TIME_SLEEP)
-    check_file_download()
+    check = check_file_download()
     icann_bot.quit()
+    return True and check
 
 def check_file_download():
-    finished = False
-    while(finished == False):
+    while(True):
         files = os.listdir(config.DOWNLOAD_PATH)
         if len(files) == 0 :
             logger.warning(f"Can't download anything!", extra = {"agent" : config.ICANN_AGENT})
-            finished = True
-            break
+            return False
 
         for i in range(0, len(files)):
             if files[i].endswith('.crdownload'):
@@ -75,7 +75,7 @@ def check_file_download():
 
             if(i == len(files) - 1):
                 logger.info(f"Download files successfully! - {len(files)} files", extra = {"agent" : config.ICANN_AGENT})
-                finished = True
+                return True
 
 def clear_files():
     files = os.listdir(config.DOWNLOAD_PATH)
@@ -135,10 +135,11 @@ def end():
     try:
         icann_bot.quit()
         splunk_bot.quit()
-        logger.info(".........DONE!!!.........", extra = {"agent" : config.SPLUNK_AGENT})
     except:
         pass
-
+    finally:
+        logger.info(".................DONE!!!................", extra = {"agent" : config.AGENT})
+        
 def split_file():
     files = os.listdir(config.DOWNLOAD_PATH)
     if len(files) == 0:
@@ -154,19 +155,39 @@ def split_file():
             remove_file(os.path.join(config.DOWNLOAD_PATH, "manifest"))
     pass
 
+def del_data():
+    splunk_bot.init_driver()
+    if splunk_bot.login(config.DEL_USR["username"], config.DEL_USR["password"]):
+        logger.info("Login success!", extra = {"agent" : config.SPLUNK_AGENT})
+        try:
+            logger.info(".................DELETING!!!................", extra = {"agent" : config.SPLUNK_AGENT})
+            info_events = splunk_bot.del_all_data()
+            logger.info(f"Deleted: {info_events}", extra = {"agent" : config.SPLUNK_AGENT})
+            splunk_bot.quit()
+            return True
+        except Exception as e:
+            logger.error(f"{str(e)}", extra = {"agent" : config.SPLUNK_AGENT})
+            logger.error(f"Error while trying to delete data!", extra = {"agent" : config.SPLUNK_AGENT})
+            splunk_bot.quit()
+    else:
+        logger.error("Login failed or Connection Failure!", extra = {"agent" : config.SPLUNK_AGENT})
+    return False
+
 def job():
     if not os.path.exists(config.DOWNLOAD_PATH):
         os.mkdir(config.DOWNLOAD_PATH)
 
     clear_files()
-    download_files()
-    extract()
-    split_file()
-    upload_files()
+    if download_files() :
+        if del_data():
+            extract()
+            split_file()
+            upload_files()
     end()
 
 if __name__ == "__main__":
-    init()
+    global logger 
+    logger = create_logger(config.LOGGER_NAME, config.LOG_FILE)
     job()
     # schedule.every().day.at("08:00").do(job)
     # while True:

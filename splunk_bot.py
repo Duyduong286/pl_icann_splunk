@@ -1,3 +1,4 @@
+import time
 import config
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,7 +14,7 @@ def init_driver():
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),chrome_options=options)
     driver.set_page_load_timeout(config.TIME_OUT)
 
-def login():
+def login(username, password):
     try:
         driver.get(config.SPLUNK_URL)
         WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("home"))
@@ -24,8 +25,8 @@ def login():
     try:
         driver.get(config.SPLUNK_URL)
         WebDriverWait(driver, config.TIME_OUT).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="username"]')))
-        driver.find_element(By.XPATH, '//*[@id="username"]').send_keys(config.SPLUNK["username"])
-        driver.find_element(By.XPATH, '//*[@id="password"]').send_keys(config.SPLUNK["password"])
+        driver.find_element(By.XPATH, '//*[@id="username"]').send_keys(username)
+        driver.find_element(By.XPATH, '//*[@id="password"]').send_keys(password)
         driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/form/fieldset/input[1]').click()
         WebDriverWait(driver, config.TIME_OUT).until(EC.url_contains("home"))
     except:
@@ -80,4 +81,27 @@ def close():
 
 def quit():
     driver.quit()
+
+def search(key : str):
+    driver.get(config.DELETE_URL)
+    WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//table[@class="search-bar"]//textarea')))
+    driver.find_element(By.XPATH, '//table[@class="search-bar"]//textarea').send_keys(key)
+    driver.find_element(By.XPATH, '//table[@class="search-bar"]//td[@class="search-timerange"]//a').click()
+    WebDriverWait(driver, config.TIME_OUT).until(EC.element_to_be_clickable((By.XPATH, '//a[@aria-label="Other All time"]')))
+    driver.find_element(By.XPATH, '//a[@aria-label="Other All time"]').click()
+    driver.find_element(By.XPATH, '//td[@class="search-button"]//a[@aria-label="Search Button"]').click()
+
+def del_all_data():
+    search('sourcetype="icann_txt" | delete')
+    WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//a[@aria-label="Other All time"]')))
+    driver.find_element(By.XPATH, '//td[@class="search-button"]//a[@aria-label="Search Button"]')
+    WebDriverWait(driver, config.TIME_OUT).until(EC.presence_of_element_located((By.XPATH, '//span[@class="number"]')))
+
+    is_complete = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[1]')
+    while (is_complete.text != "Complete") :
+        time.sleep(config.TIME_SLEEP)
+        is_complete = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[1]')
+
+    info_events = driver.find_element(By.XPATH, '//div[@class="status shared-jobstatus-count"]/span[2]')
+    return info_events.text 
 
