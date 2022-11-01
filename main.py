@@ -193,7 +193,7 @@ if __name__ == "__main__":
     global logger 
     logger = create_logger(config.LOGGER_NAME, config.LOG_FILE)
     job()
-    # schedule.every().day.at("08:00").do(job)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    schedule.every().tuesday.at("08:00").do(job)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
